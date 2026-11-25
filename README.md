@@ -2,6 +2,8 @@
 
 Play it at https://ivy-zhou.github.io/placement-garden/.
 
+![A solved level: four ranks each hold a strided 2 x 2 block of the global tensor](docs/screenshot.png)
+
 A [Grid Garden](https://cssgridgarden.com/)–style game for DTensor placements. The global tensor `x` holds one seed per element, and each plot is a rank. There are two modes, switched globally:
 
 - **Place seeds (the default):** the placements are given. Each rank's plot is an allotment the size of the global tensor; till land to the local tensor's shape (what `dtensor.to_local()` holds): click empty ground to add land up to there and click a square of land to remove just that square (the land counts once it fills a rectangle), then drag seeds from the global tensor into the right positions. Click a seed and then a slot also works; drag a planted square to move it (land and seed), onto another seed to swap them, or back to the global tensor to dig it up. Each rank's row and column handles (⠿) move a whole row or column of its land the same way.
