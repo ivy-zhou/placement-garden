@@ -1,5 +1,7 @@
 # Placement Garden
 
+Play it at https://ivy-zhou.github.io/placement-garden/.
+
 A [Grid Garden](https://cssgridgarden.com/)–style game for DTensor placements. The global tensor `x` holds one seed per element, and each plot is a rank. There are two modes, switched globally:
 
 - **Place seeds (the default):** the placements are given. Each rank's plot is an allotment the size of the global tensor; till land to the local tensor's shape (what `dtensor.to_local()` holds): click empty ground to add land up to there and click a square of land to remove just that square (the land counts once it fills a rectangle), then drag seeds from the global tensor into the right positions. Click a seed and then a slot also works; drag a planted square to move it (land and seed), onto another seed to swap them, or back to the global tensor to dig it up. Each rank's row and column handles (⠿) move a whole row or column of its land the same way.
@@ -11,13 +13,17 @@ Placement Garden is MIT licensed (`LICENSE`). The art (`images/`), page layout, 
 
 ## Run
 
+From a clone of this repo:
+
 ```
-cd ~/local/placement-garden && python3 -m http.server 8000
+python3 -m http.server 8000
 ```
 
 Then open `http://localhost:8000/`, or open `index.html` directly. Progress is saved in localStorage.
 
 `python3 build.py` writes a self-contained `dist/placement-garden.html` (CSS, scripts and images inlined) that works on its own.
+
+The site is static, with no build step: GitHub Pages serves `index.html` from the root of `main`.
 
 ## Layout
 
