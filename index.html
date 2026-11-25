@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Placement Garden - A game for learning DTensor placements</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <section id="sidebar">
+      <div class="header">
+        <div>
+          <h1 class="title">Placement Garden</h1>
+        </div>
+        <div id="level-counter">
+          <span class="arrow left">
+            <span class="triangle"></span>
+          </span>
+          <span id="level-indicator">
+            <span id="labelLevel">Level</span>
+            <span class="current">1</span>
+            <span id="labelOf">of</span>
+            <span class="total">1</span>
+            <span class="caret">▾</span>
+          </span>
+          <span class="arrow right">
+            <span class="triangle"></span>
+          </span>
+          <div id="levelsWrapper" class="tooltip">
+            <div id="levels"></div>
+            <div id="labelReset">Reset</div>
+          </div>
+        </div>
+      </div>
+      <div id="mode" class="mode-toggle" role="radiogroup" aria-label="game mode">
+        <span data-mode="plant" role="radio">Place seeds</span><span data-mode="write" role="radio">Write placements</span>
+      </div>
+      <div id="instructions"></div>
+      <div id="editor">
+        <div id="css">
+          <div class="line-numbers"></div>
+          <pre id="before"></pre>
+          <textarea id="code" autocapitalize="none" autocomplete="off" spellcheck="false" aria-label="placements"></textarea>
+          <pre id="after"></pre>
+        </div>
+        <button id="next" class="disabled">Next</button>
+      </div>
+      <div class="helpers">
+        <span id="hint-btn" class="toggle">Hint</span>
+        <span id="solution-btn" class="toggle">Show a solution</span>
+        <span class="placement-list"><code>Shard(dim)</code> <code>Replicate()</code> <code>_StridedShard(dim, split_factor=k)</code></span>
+      </div>
+      <div id="hint"></div>
+      <div class="credits">
+        Seed layouts follow torch's <code>Shard</code> and <code>_StridedShard</code> splitting. Any placements that grow the target garden count.
+      </div>
+      <div class="credits">
+        Art, layout and styles from <a href="https://github.com/thomaspark/gridgarden/">Grid Garden</a> by Thomas Park (<a href="https://codepip.com">Codepip</a>), MIT license.
+      </div>
+    </section>
+    <section id="view">
+      <div id="seeds-band">
+        <div id="seeds"></div>
+        <div id="legend"></div>
+      </div>
+      <div id="board-wrap">
+        <div id="board">
+          <div id="field"></div>
+        </div>
+        <div id="board-tools">
+          <button id="snap" title="pack each rank's land into its top-left corner, closing up the gaps">Snap to offset 0</button>
+          <button id="clear-all" title="empty every plot">Clear all</button>
+        </div>
+      </div>
+    </section>
+    <script src="js/engine.js"></script>
+    <script src="js/garden.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+</html>

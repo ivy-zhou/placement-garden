@@ -1,0 +1,927 @@
+/* Layout, colors, editor, level picker and garden art adapted from Grid Garden
+   (https://github.com/thomaspark/gridgarden, MIT, see third_party/gridgarden/LICENSE).
+   tada/pulse/shake/bounce keyframes from Animate.css (MIT, Daniel Eden). Grid Garden's display fonts
+   are replaced with system fonts. */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  min-width: 600px;
+  margin: 0;
+  background-color: #5DA449;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+#sidebar {
+  width: 38%;
+  min-width: 460px;
+  flex-shrink: 0;
+  position: relative;
+  padding: 2em;
+  font-size: 15px;
+}
+
+#view {
+  flex: 1;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  height: 100vh;
+  min-width: 0;
+  padding: 1em;
+}
+
+#seeds-band {
+  flex: 0 0 clamp(150px, 24vh, 270px);
+  display: flex;
+  align-items: flex-start;
+  gap: 1em;
+  min-height: 0;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: -0.5rem;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0.5rem 0 0;
+  text-transform: uppercase;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.mode-toggle {
+  display: inline-flex;
+  margin-top: 1.25em;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  user-select: none;
+}
+
+.mode-toggle span {
+  padding: 5px 14px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.mode-toggle span + span {
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mode-toggle span:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.mode-toggle span.active {
+  background-color: #DA931E;
+  color: #fff;
+}
+
+.how-to {
+  margin: 1em 0 0.5em;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.how-to summary {
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.how-to ul {
+  margin: 6px 0 4px;
+  padding-left: 1.3em;
+}
+
+.how-to li {
+  line-height: 1.5;
+}
+
+#instructions p {
+  line-height: 1.5;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+code {
+  padding: 0 2px;
+  background-color: rgba(255, 255, 255, 0.2);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+a {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+a:hover {
+  color: #fff;
+}
+
+.tooltip {
+  position: absolute;
+  display: inline-block;
+  max-width: 300px;
+  padding: 0 1em 1em;
+  background-color: #2c3e50;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  z-index: 60;
+}
+
+.tooltip:after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #2c3e50;
+}
+
+#editor {
+  position: relative;
+  margin-top: 1.5em;
+}
+
+#editor,
+pre {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #777;
+}
+
+#css {
+  min-height: 200px;
+  position: relative;
+  padding: 10px 10px 56px 40px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.line-numbers {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  padding: 10px 6px;
+  text-align: right;
+  background-color: #999;
+  color: #D5D5D5;
+}
+
+#before .fixed {
+  color: #999;
+}
+
+#before .comment,
+#after .comment {
+  color: #aaa;
+}
+
+#code {
+  display: block;
+  width: calc(100% - 36px);
+  height: 24px;
+  margin-left: 36px;
+  border: none;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: 16px;
+  line-height: 24px;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+}
+
+input.inline.error {
+  background-color: #FFEBEE;
+  box-shadow: inset 0 -3px 0 #C62828;
+}
+
+input.inline {
+  width: 7ch;
+  border: none;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: 15px;
+  outline: none;
+}
+
+#level-counter {
+  position: relative;
+  display: inline-block;
+  height: 30px;
+  margin-top: 0.5rem;
+  font-size: 15px;
+  user-select: none;
+}
+
+#levelsWrapper {
+  display: none;
+  top: 30px;
+  right: 31px;
+  max-width: 200px;
+  padding: 1em 0.5em;
+  margin-top: 12px;
+  z-index: 80;
+}
+
+#levelsWrapper:after {
+  left: calc(50% - 12px);
+}
+
+#levels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.level-marker {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin: 2px;
+  line-height: 26px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+}
+
+.level-marker.current,
+.level-marker:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.level-marker.solved {
+  background-color: #5DA449;
+}
+
+#level-indicator,
+.arrow {
+  float: left;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#level-indicator {
+  display: inline-block;
+  width: 160px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.caret {
+  display: inline-block;
+  margin-left: 2px;
+}
+
+#level-indicator:hover,
+.arrow:not(.disabled):hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+#labelReset {
+  margin-top: 1em;
+  text-align: center;
+  cursor: pointer;
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25em 0.5em 0.2em;
+  cursor: pointer;
+}
+
+.arrow.left {
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px 0 0 4px;
+}
+
+.arrow.right {
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0 4px 4px 0;
+}
+
+.arrow.disabled {
+  opacity: 0.5;
+}
+
+.triangle {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+
+.left .triangle {
+  border-right: 11px solid rgba(255, 255, 255, 0.7);
+}
+
+.right .triangle {
+  border-left: 11px solid rgba(255, 255, 255, 0.7);
+}
+
+button {
+  display: inline-block;
+  padding: 0.4em 0.8em;
+  background-color: #DA931E;
+  border: none;
+  border-radius: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  appearance: none;
+}
+
+button:not(.disabled):hover {
+  background-color: #C97B00;
+}
+
+#next {
+  position: absolute;
+  right: 1em;
+  bottom: 1em;
+  padding-top: 0.3em;
+}
+
+#next.disabled {
+  opacity: 0.5;
+}
+
+.animation {
+  animation: tada 1s, pulse 2s infinite 2s;
+}
+
+.shake {
+  animation: shake 1s;
+}
+
+#code.error {
+  background-color: #FFEBEE;
+  box-shadow: inset 0 -3px 0 #C62828;
+}
+
+#code.ok {
+  background-color: #F1F8E9;
+  box-shadow: inset 0 -3px 0 #558B2F;
+}
+
+.helpers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.5em;
+  font-size: 14px;
+}
+
+.toggle {
+  display: inline-block;
+  padding: 2px 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.toggle.disabled {
+  display: none;
+}
+
+.placement-list code {
+  font-size: 13px;
+}
+
+#hint {
+  margin-top: 0.75em;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.credits {
+  margin-top: 1.5em;
+  line-height: 1.5em;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.credits code {
+  font-weight: normal;
+}
+
+/* The view: a seed packet above a board of plots, one plot per rank. */
+
+#seeds {
+  max-height: 100%;
+  padding: 8px 12px 12px;
+  background-color: #6D5720;
+  border-radius: 8px;
+}
+
+.seeds-title {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.seeds-title code {
+  background: none;
+  font-weight: 700;
+}
+
+.plant-mode #seeds .plot {
+  cursor: grab;
+}
+
+.plot.selected,
+.slot.drop-hover,
+.untilled.drop-hover {
+  outline: 3px solid #FFD54F;
+  outline-offset: -3px;
+  z-index: 6;
+}
+
+#board-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+/* A tab on the board's top border, like the mesh dim 0 labels. */
+#board-tools {
+  display: none;
+  position: absolute;
+  top: -12px;
+  right: 28px;
+  z-index: 10;
+  gap: 8px;
+}
+
+.plant-mode #board-tools {
+  display: flex;
+}
+
+#board-tools button {
+  padding: 2px 10px;
+  line-height: 16px;
+  border-radius: 12px;
+  background-color: #6D5720;
+  border: 2px solid #8D7230;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+#board-tools button:hover {
+  background-color: #8D7230;
+}
+
+#board {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+  overflow: auto;
+  border: 12px solid #6D5720;
+  border-radius: 12px;
+  background-color: #523D1F;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#board.solved {
+  border-color: #FFD54F;
+  box-shadow: 0 0 0 4px rgba(255, 213, 79, 0.45);
+}
+
+#legend {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.18);
+  font-size: 14px;
+  color: #fff;
+}
+
+#legend:empty {
+  display: none;
+}
+
+#field {
+  display: flex;
+  gap: 24px;
+  margin: auto;
+  padding: 12px;
+}
+
+.board-group {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+#field[style*="row"],
+#field[style*="column"] {
+  gap: 16px;
+}
+
+.board-group.framed {
+  position: relative;
+  padding: 26px 8px 8px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+.group-label {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 12px;
+  border-radius: 12px;
+  background-color: #6D5720;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #FFD54F;
+}
+
+.mesh-head {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #FFD54F;
+  white-space: nowrap;
+}
+
+.mesh-head:not(.row) {
+  justify-self: center;
+  text-align: center;
+}
+
+.mesh-head.row {
+  align-self: center;
+}
+
+/* Place seeds: each plot is a fixed allotment the size of the global tensor. Tilled cells are the
+   player's local tensor. */
+
+.allotment {
+  display: grid;
+  justify-content: start;
+}
+
+.untilled {
+  width: var(--cell);
+  height: var(--cell);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  background-color: rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+
+.untilled.drop-hover {
+  position: relative;
+  background-color: rgba(255, 213, 79, 0.15);
+}
+
+.untilled:not(.idle):hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.untilled.idle {
+  cursor: default;
+}
+
+.local-shape {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: normal;
+  color: #FFD54F;
+}
+
+.rank-label {
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17px;
+  color: #fff;
+}
+
+.rank-label > div {
+  white-space: nowrap;
+}
+
+.rank-label .coord {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.rank-label.handle {
+  cursor: grab;
+}
+
+.grip {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.rank-label.handle:hover .grip,
+.idx.line:hover .grip,
+.idx.line.selected .grip {
+  color: #FFD54F;
+}
+
+.rank.drop-hover {
+  border-color: #FFD54F;
+  border-style: dashed;
+}
+
+.rank-label .tick {
+  color: #FFD54F;
+}
+
+.rank {
+  padding: 3px 4px 4px;
+  border: 3px solid transparent;
+  border-radius: 8px;
+}
+
+.rank.ok {
+  border-color: #9CCC65;
+  background-color: rgba(156, 204, 101, 0.15);
+}
+
+.rank.bad {
+  border-color: #E57373;
+  background-color: rgba(229, 115, 115, 0.12);
+}
+
+.footprint {
+  display: grid;
+  justify-content: start;
+}
+
+.plot {
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  background-color: #836B32;
+  background-image: url('../images/dirt.svg');
+  background-size: var(--cell);
+}
+
+.plot:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.05), inset -2px -2px 0 #665235;
+  pointer-events: none;
+}
+
+.plant {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.plant .bg {
+  width: 100%;
+  height: 100%;
+  background-position: left top;
+  background-size: var(--cell);
+}
+
+.plant.carrot .bg {
+  background-image: url('../images/carrots.svg');
+}
+
+.plant.carrot.correct .bg {
+  background-image: url('../images/carrots-correct.svg');
+}
+
+.plant.weed .bg {
+  background-image: url('../images/weeds.svg');
+}
+
+.marker {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;
+  height: 76%;
+  border: 2px dashed rgba(255, 236, 179, 0.85);
+  border-radius: 50%;
+}
+
+.plot.wrong:after {
+  box-shadow: inset 0 0 0 3px #E53935;
+  background-color: rgba(229, 57, 53, 0.25);
+}
+
+.plot.planned .tag {
+  top: 50%;
+  left: 50%;
+  min-width: 0;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  background: none !important;
+  box-shadow: none;
+  font-size: max(12px, min(18px, calc(var(--cell) * 0.38)));
+  color: #FFECB3;
+}
+
+.slot {
+  cursor: pointer;
+}
+
+.slot .plant {
+  cursor: grab;
+}
+
+.tag {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  z-index: 5;
+  min-width: max(15px, min(19px, calc(var(--cell) * 0.55)));
+  height: max(15px, min(19px, calc(var(--cell) * 0.55)));
+  padding: 0 3px;
+  border-radius: 8px;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: max(11px, min(13px, calc(var(--cell) * 0.4)));
+  font-weight: 900;
+  line-height: max(15px, min(19px, calc(var(--cell) * 0.55)));
+  text-align: center;
+  color: #333;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.idx {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.idx.line {
+  gap: 1px;
+  padding: 0 3px;
+  border-radius: 4px;
+  cursor: grab;
+}
+
+.idx.line:hover,
+.idx.line.selected {
+  background-color: rgba(255, 213, 79, 0.35);
+  color: #fff;
+}
+
+.idx.line.compact {
+  padding: 0;
+  gap: 0;
+  font-size: 10px;
+}
+
+#board.win:before {
+  content: '';
+  position: absolute;
+  top: 18%;
+  left: 41%;
+  width: 18%;
+  height: 18%;
+  background-image: url('../images/froggy.svg');
+  background-size: contain;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  z-index: 110;
+  animation: bounce 2s linear infinite;
+}
+
+#board.win:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(82, 61, 31, 0.6);
+  background-image: url('../images/carrots-win.png');
+  background-size: contain;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  z-index: 100;
+}
+
+@keyframes tada {
+  from { transform: scale3d(1, 1, 1); }
+  10%, 20% { transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg); }
+  30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
+  40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+@keyframes pulse {
+  from { transform: scale3d(1, 1, 1); }
+  50% { transform: scale3d(1.05, 1.05, 1.05); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+
+@keyframes shake {
+  from, 100% { transform: translate3d(0, 0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+  20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }
+}
+
+@keyframes bounce {
+  from, 20%, 53%, 80%, 100% { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); transform: translate3d(0, 0, 0); }
+  40%, 43% { animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06); transform: translate3d(0, -30px, 0); }
+  70% { animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06); transform: translate3d(0, -15px, 0); }
+  90% { transform: translate3d(0, -4px, 0); }
+}
+
+@media only screen and (max-width: 767px) {
+  body {
+    flex-direction: column-reverse;
+    align-items: center;
+    min-width: 100vw;
+  }
+
+  body,
+  #sidebar {
+    font-size: 13px;
+  }
+
+  #sidebar {
+    width: 100%;
+  }
+
+  #view {
+    min-height: 0;
+  }
+
+  .header {
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+}
